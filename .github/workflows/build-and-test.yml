@@ -18,8 +18,13 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
-    - name: Check for Syntax Errors
+    - name: Check for Syntax Errors in Pull Request Code
       run: npm run lint
+
+    - name: Check for Syntax Errors in Current Code
+      run: |
+        git checkout ${{ github.base_ref }}
+        npm run lint
 
     - name: Build and Test React Components
       run: npm test
