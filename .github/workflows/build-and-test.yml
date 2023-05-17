@@ -1,0 +1,48 @@
+name: Build and Test
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [ opened, synchronize ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.head_ref }}
+        fetch-depth: 0
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Check for Syntax Errors
+      run: npm run lint
+
+    - name: Build and Test React Components
+      run: npm test
+
+    - name: Build and Test HTML and Tailwind CSS
+      run: npm run build
+
+    - name: Check for Test Failures
+      run: |
+        if [ -z "$(npm test -- --silent | grep 'FAIL')" ]; then
+          echo "All tests passed"
+        else
+          echo "Some tests failed"
+          gh pr close -d "Some tests failed. Please fix the failures and try again."
+          exit 1
+        fi
+
+    - name: Check for Build Errors
+      run: |
+        if [ -z "$(git status --porcelain)" ]; then
+          echo "Build successful"
+        else
+          echo "Build failed"
+          gh pr close -d "The build failed. Please fix the errors and try again."
+          exit 1
+        fi
