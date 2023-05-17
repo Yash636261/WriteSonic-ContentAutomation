@@ -1,11 +1,14 @@
 import { useState } from "react";
-import "../style/App.css";
+// import "../style/App.css";
+import Navbar from "./Navbar";
+import Hero from "./Hero";
 
 function App() {
   return (
     <div>
-      <h1 className="text-3xl font-bold underline text-red-500">
-        Setup is complete!
+      <h1 className="overflow-y-auto">
+        <Navbar/>
+        <Hero/>
       </h1>
     </div>
   );
